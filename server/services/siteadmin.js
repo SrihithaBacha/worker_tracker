@@ -1,13 +1,8 @@
 const addEmployee=()=>{
-    //generate emp-id,password,joining date
-    //req body :siteid,name,email,mobilenumber,imagedp
-    // add to employee collection
-    //res message:added employee
 
 }
 
 const getEmployees=()=>{
-    //generate 
     
 }
 

@@ -1,4 +1,5 @@
-import '../config/database';
+const mongoose = require('mongoose');
+require('../config/database');
 
 const employeeSchema = new mongoose.Schema({
     empId: { type: String, required: true, unique: true },
