@@ -3,6 +3,12 @@ import { login } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 
+import axios from 'axios';
+
+// Enable CORS for all requests
+axios.defaults.baseURL = 'http://localhost:5000'; // Replace with your backend URL
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+
 function Login() {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
