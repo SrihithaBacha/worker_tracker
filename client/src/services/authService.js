@@ -1,11 +1,8 @@
 import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api/users';
-
-export const login = async (id, password,role) => {
+export const login = async (email, password,role) => {
     try {
-        console.log("id:"+id+" password:"+password+" role:"+role);
-        const response = await axios.post(`${API_URL}/login`, { id, password ,role});
+        console.log("email:"+email+" password:"+password+" role:"+role);
+        const response = await axios.post('http://localhost:5000/api/login', { email, password ,role});
         if (response.data.token) {
             localStorage.setItem('user', JSON.stringify(response.data));
         }
@@ -22,4 +19,4 @@ export const getUserFromStorage = () => {
 
 export const logout = () => {
     localStorage.removeItem('user');
-};
+};  

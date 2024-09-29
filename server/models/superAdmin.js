@@ -1,4 +1,5 @@
-import '../config/database';
+const mongoose = require('mongoose');
+require('../config/database');
 
 const superadminSchema = new mongoose.Schema({
     id: { type: String, required: true },  // Unique ID for the superadmin

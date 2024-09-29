@@ -1,4 +1,5 @@
-import '../config/database';
+const mongoose = require('mongoose');
+require('../config/database');
 
 const siteadminSchema = new mongoose.Schema({
     siteadminId: { type: String, required: true, unique: true },

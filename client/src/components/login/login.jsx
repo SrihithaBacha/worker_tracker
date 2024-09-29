@@ -3,9 +3,15 @@ import { login } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 
+import axios from 'axios';
+
+// Enable CORS for all requests
+axios.defaults.baseURL = 'http://localhost:5000'; // Replace with your backend URL
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+
 function Login() {
     const [password, setPassword] = useState('');
-    const [id, setId] = useState('');
+    const [email, setEmail] = useState('');
     const [role, setRole] = useState('employee');
     const navigate = useNavigate();
 
@@ -13,7 +19,8 @@ function Login() {
         e.preventDefault();
         try {
             // console.log("id:"+id+" password:"+password+" role:"+role);
-            const user = await login(id, password, role);
+            const user = await login(email, password, role);
+            console.log(user);
             if (user.role === 'employee') navigate('/employee');
             else if (user.role === 'superAdmin') navigate('/superAdmin');
             else if (user.role === 'siteAdmin') navigate('/siteAdmin');
@@ -32,9 +39,9 @@ function Login() {
                 <p id='logintext'>Login</p>
                 <input
                     type="text"
-                    placeholder="Username"
-                    value={id}
-                    onChange={(e) => setId(e.target.value)}
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                 />
                 <input
