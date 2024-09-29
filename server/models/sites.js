@@ -1,4 +1,4 @@
-import '../config/database';
+const mongoose = require('../config/database');
 
 const siteSchema = new mongoose.Schema({
   siteId: { type: String, required: true, unique: true },

@@ -5,7 +5,7 @@ import './login.css';
 
 function Login() {
     const [password, setPassword] = useState('');
-    const [id, setId] = useState('');
+    const [email, setEmail] = useState('');
     const [role, setRole] = useState('employee');
     const navigate = useNavigate();
 
@@ -13,7 +13,8 @@ function Login() {
         e.preventDefault();
         try {
             // console.log("id:"+id+" password:"+password+" role:"+role);
-            const user = await login(id, password, role);
+            const user = await login(email, password, role);
+            console.log(user);
             if (user.role === 'employee') navigate('/employee');
             else if (user.role === 'superAdmin') navigate('/superAdmin');
             else if (user.role === 'siteAdmin') navigate('/siteAdmin');
@@ -32,9 +33,9 @@ function Login() {
                 <p id='logintext'>Login</p>
                 <input
                     type="text"
-                    placeholder="Username"
-                    value={id}
-                    onChange={(e) => setId(e.target.value)}
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                 />
                 <input

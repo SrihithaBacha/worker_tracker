@@ -1,0 +1,322 @@
+/* src/components/styles/ViewEmployee.css */
+
+.employee-table-container {
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 1200px;
+  margin: 40px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 25px;
+}
+
+.search-bar {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  margin: 0 auto 20px auto;
+  display: block;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.message {
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.employee-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.employee-table th,
+.employee-table td {
+  border: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: center;
+}
+
+.employee-table th {
+  background-color: #2980b9;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.employee-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.employee-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.employee-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.dp-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dp-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #bdc3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.hamburger-menu {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #2980b9;
+}
+
+.hamburger-menu:hover {
+  color: #1f6391;
+}
+
+.delete-btn {
+  background-color: #c0392b;
+  color: #ffffff;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+  background-color: #992d22;
+}
+
+.add-remark-btn {
+  background-color: #27ae60;
+  color: #ffffff;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 5px;
+}
+
+.add-remark-btn:hover {
+  background-color: #1e8449;
+}
+
+.remark-input-container {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.remark-input {
+  padding: 5px 10px;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.submit-remark-btn {
+  background-color: #2980b9;
+  color: #ffffff;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-remark-btn:hover {
+  background-color: #1f6391;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px 0;
+  color: #7f8c8d;
+}
+
+.employee-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.employee-dialog {
+  background-color: #ffffff;
+  padding: 25px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+}
+
+.employee-dialog h3 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.dialog-content p {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #34495e;
+}
+
+.close-dialog-btn {
+  background-color: #c0392b;
+  color: #ffffff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 15px;
+}
+
+.close-dialog-btn:hover {
+  background-color: #992d22;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .employee-table-container {
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  .employee-table th,
+  .employee-table td {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .dp-image,
+  .dp-placeholder {
+    width: 35px;
+    height: 35px;
+  }
+
+  .hamburger-menu {
+    font-size: 18px;
+  }
+
+  .delete-btn,
+  .add-remark-btn,
+  .submit-remark-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .employee-table-container {
+    padding: 15px;
+  }
+
+  .employee-table th,
+  .employee-table td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .dp-image,
+  .dp-placeholder {
+    width: 30px;
+    height: 30px;
+  }
+
+  .hamburger-menu {
+    font-size: 16px;
+  }
+
+  .delete-btn,
+  .add-remark-btn,
+  .submit-remark-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .employee-dialog {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  .dialog-content p {
+    font-size: 14px;
+  }
+}

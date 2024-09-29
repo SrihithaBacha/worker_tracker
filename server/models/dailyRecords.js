@@ -1,4 +1,4 @@
-import '../config/database';
+const mongoose = require('../config/database');
 
 const dailyRecordSchema = new mongoose.Schema({
     empId: { type: String, required: true },  // Reference to the employee
