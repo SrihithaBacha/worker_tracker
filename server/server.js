@@ -3,7 +3,6 @@ const dotenv = require("dotenv");
 const cors = require('cors');
 const {login}=require('./controllers/authController');
 const attendanceRoutes = require('./controllers/dailyRecords.js');
-const employeeRoutes = require('./controllers/employee.js');
 const Site = require('./models/sites');
 
 const app = express();
@@ -24,7 +23,6 @@ app.use( require("./controllers/siteadmin") );
 //app.use( require("./controllers/superadmin") );
 
 app.use('/api', attendanceRoutes);
-app.use('/api/employees', employeeRoutes);
 
 app.post('/api/sites/:siteId/images', async (req, res) => {
   try {
@@ -48,6 +46,38 @@ app.post('/api/sites/:siteId/images', async (req, res) => {
     res.status(500).json({ error: 'Failed to add image to site' });
   }
 });
+
+
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'assets'); // Store images in the assets folder
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
+app.post('/sites/progressImages', upload.single('image'), async (req, res) => {
+  const { siteId } = req.body;
+  const imagePath = req.file.filename; // Get the stored image filename
+
+  // Update the site with the new image reference in your database
+  // Assuming you have a Site model
+  const updatedSite = await Site.findOneAndUpdate(
+    { "siteId": siteId },  // Use an object as the filter
+    { $push: { progressImages: imagePath } },
+    { new: true }  // Return the updated document
+  );
+  
+
+
+  res.json({ progressImages: updatedSite.progressImages });
+});
+
 
 
 const PORT = process.env.PORT || 5000;

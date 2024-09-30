@@ -60,32 +60,30 @@ const SiteProgress = () => {
       return;
     }
 
-    // Convert image to Base64
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64String = reader.result.split(',')[1];
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.append('siteId', siteId);
 
-      try {
-        setLoading(true);
-        const response = await axios.put(`http://localhost:5000/sites/progressImages/${siteId}`, {
-          progressImages: [base64String],
-        });
+    try {
+      setLoading(true);
+      const response = await axios.post(`http://localhost:5000/sites/progressImages`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-        // Update progress images from the response
-        setProgressImages(response.data.progressImages);
-        setSuccessMessage('Progress image added successfully.');
-        setErrorMessage('');
-        setImageFile(null);
-        setShowDialog(false);
-      } catch (error) {
-        console.error('Error adding progress image:', error);
-        setErrorMessage('Failed to add progress image.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    reader.readAsDataURL(imageFile);
+      // Update progress images from the response
+      setProgressImages(response.data.progressImages);
+      setSuccessMessage('Progress image added successfully.');
+      setErrorMessage('');
+      setImageFile(null);
+      setShowDialog(false);
+    } catch (error) {
+      console.error('Error adding progress image:', error);
+      setErrorMessage('Failed to add progress image.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Toggle the add image dialog
@@ -124,12 +122,8 @@ const SiteProgress = () => {
           {progressImages.length > 0 ? (
             progressImages.map((image, index) => (
               <div key={index} className="image-item">
-                {/* If the image is a Base64 string, render it accordingly */}
-                {image.startsWith('data:image') ? (
-                  <img src={image} alt={`Progress ${index + 1}`} />
-                ) : (
-                  <img src={image} alt={`Progress ${index + 1}`} />
-                )}
+                {/* Render image directly from assets */}
+                <img src={`http://localhost:5000/assets/${image}`} alt={`Progress ${index + 1}`} />
               </div>
             ))
           ) : (

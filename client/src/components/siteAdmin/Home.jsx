@@ -59,9 +59,8 @@ const Home = () => {
       });
 
       // Fetch total employees
-      const employeesResponse = await axios.get(`http://localhost:5000/employee`, {
-        params: { siteId: site_id, isDeleted: false },
-      });
+      const employeesResponse = await axios.get(`http://localhost:5000/employee/undersite/${site_id}`
+      );
       const employees = employeesResponse.data.employees;
       setTotalEmployees(employees.length);
 
@@ -97,39 +96,7 @@ const Home = () => {
     }
   };
 
-  const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      // Convert image to Base64
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64String = reader.result.split(',')[1];
-        setNewImage(base64String);
-
-        // Update the site image in the backend
-        setLoading(true);
-        try {
-          await axios.put(`http://localhost:5000/sites/${site_id}`, {
-            siteImage: base64String,
-            siteInfo: siteDetails.siteInfo,
-          });
-          alert('Site image updated successfully');
-          setNewImage('');
-          fetchData();
-        } catch (error) {
-          console.error('Error updating site image:', error);
-          alert('Failed to update site image');
-        } finally {
-          setLoading(false);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
  
-
-
   const attendanceData = {
     labels: ['Employees Present', 'Total Employees'],
     datasets: [
@@ -187,17 +154,9 @@ const Home = () => {
           <div className="site-details">
             <div className="image-upload">
               <img
-                src={siteDetails.siteImage ? `data:image/*;base64,${siteDetails.siteImage}` : 'https://via.placeholder.com/300x200?text=No+Image'}
+                src={siteDetails.siteImage ? `${siteDetails.siteImage}` : 'https://via.placeholder.com/300x200?text=No+Image'}
                 alt="Site"
                 className="site-image"
-                onClick={() => document.getElementById('image-upload-input').click()}
-              />
-              <input
-                type="file"
-                accept="image/*"
-                id="image-upload-input"
-                style={{ display: 'none' }}
-                onChange={handleImageUpload}
               />
               {loading && <div className="spinner-small"></div>}
             </div>

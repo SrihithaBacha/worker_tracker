@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
 const { v4: uuidv4 } = require('uuid');
 
-// Import your Mongoose models
 const Superadmin = require('./models/superAdmin');
 const Siteadmin = require('./models/siteAdmin');
 const Site = require('./models/sites');

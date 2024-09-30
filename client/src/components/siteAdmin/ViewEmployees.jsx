@@ -1,47 +1,54 @@
-// src/components/EmployeeTable.jsx
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './styles/ViewEmployee.css';
+import './styles/ViewEmployee.css'; // Corrected import path
 import Navbar from './Navbar';
 
-const EmployeeTable = () => {
+const ViewEmployee = () => {
   // Retrieve siteId from localStorage
   const siteId = localStorage.getItem('siteId');
 
   // State variables
   const [employees, setEmployees] = useState([]);
+  const [dailyRecords, setDailyRecords] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
-  const [remarkInput, setRemarkInput] = useState({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Fetch employees on component mount
+  // Fetch employees and daily records on component mount
   useEffect(() => {
     if (!siteId) {
       setErrorMessage('Site ID not found. Please log in again.');
       return;
     }
 
-    const fetchEmployees = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:5000/employee/${siteId}`);
-        setEmployees(response.data);
-        setFilteredEmployees(response.data);
+        // Fetch employees under the site
+        const employeesResponse = await axios.get(`http://localhost:5000/employee/undersite/${siteId}`);
+        // Filter out deleted employees
+        const activeEmployees = employeesResponse.data.employees.filter(emp => !emp.isDeleted);
+        setEmployees(activeEmployees);
+        setFilteredEmployees(activeEmployees);
+
+        // Fetch all daily records for the site up to today
+        const recordsResponse = await axios.get(`http://localhost:5000/dailyrecords/${siteId}`);
+        setDailyRecords(recordsResponse.data.records);
+
         setErrorMessage('');
       } catch (error) {
-        console.error('Error fetching employees:', error);
-        setErrorMessage('Failed to load employees.');
+        console.error('Error fetching data:', error);
+        setErrorMessage('Failed to load employees or daily records.');
       } finally {
         setLoading(false);
       }
     };
-    fetchEmployees();
+
+    fetchData();
   }, [siteId]);
 
   // Handle search query
@@ -49,75 +56,104 @@ const EmployeeTable = () => {
     const query = e.target.value;
     setSearchQuery(query);
     const filtered = employees.filter(emp =>
-      emp.emp_name.toLowerCase().includes(query.toLowerCase()) ||
-      emp.emp_id.toLowerCase().includes(query.toLowerCase())
+      emp.name.toLowerCase().includes(query.toLowerCase()) ||
+      emp.empId.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredEmployees(filtered);
   };
 
-  // Handle opening the dialog box with employee details
-  const handleHamburgerClick = (employee) => {
+  // Handle clicking on employee name to open dialog
+  const handleNameClick = (employee) => {
     setSelectedEmployee(employee);
     setShowDialog(true);
   };
 
   // Handle deleting an employee
-  const handleDelete = async (emp_id) => {
+  const handleDelete = async (empId) => {
     if (!window.confirm('Are you sure you want to delete this employee? This action cannot be undone.')) {
       return;
     }
     try {
-      await axios.delete(`http://localhost:5000/employee/${siteId}/${emp_id}`);
-      await axios.delete(`http://localhost:5000/users/${emp_id}`);
-      setEmployees(employees.filter(emp => emp.emp_id !== emp_id));
-      setFilteredEmployees(filteredEmployees.filter(emp => emp.emp_id !== emp_id));
+      setLoading(true);
+      // Delete employee via PUT /employee/delete/:empId
+      await axios.put(`http://localhost:5000/employee/delete/${empId}`);
+      // Delete user via DELETE /users/:empId
+      await axios.delete(`http://localhost:5000/users/${empId}`);
+      // Remove employee from state
+      const updatedEmployees = employees.filter(emp => emp.empId !== empId);
+      setEmployees(updatedEmployees);
+      setFilteredEmployees(updatedEmployees.filter(emp =>
+        emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        emp.empId.toLowerCase().includes(searchQuery.toLowerCase())
+      ));
       setSuccessMessage('Employee deleted successfully.');
       setErrorMessage('');
     } catch (error) {
       console.error('Error deleting employee:', error);
       setErrorMessage('Error deleting employee.');
       setSuccessMessage('');
-    }
-  };
-
-  // Handle remarks input change
-  const handleRemarksChange = (emp_id, value) => {
-    setRemarkInput((prev) => ({ ...prev, [emp_id]: value }));
-  };
-
-  // Handle adding remarks
-  const handleAddRemark = async (employee) => {
-    if (!remarkInput[employee.emp_id] || remarkInput[employee.emp_id].trim() === '') {
-      setErrorMessage('Remark cannot be empty.');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const updatedEmployee = { ...employee, today_remarks: remarkInput[employee.emp_id] };
-      await axios.put(`http://localhost:5000/employee/${siteId}/${employee.emp_id}`, updatedEmployee);
-      setEmployees(employees.map(emp => (emp.emp_id === employee.emp_id ? updatedEmployee : emp)));
-      setFilteredEmployees(filteredEmployees.map(emp => (emp.emp_id === employee.emp_id ? updatedEmployee : emp)));
-      setRemarkInput((prev) => ({ ...prev, [employee.emp_id]: '' }));
-      setSuccessMessage('Remark added successfully.');
-      setErrorMessage('');
-    } catch (error) {
-      console.error('Error adding remark:', error);
-      setErrorMessage('Failed to add remark.');
-      setSuccessMessage('');
     } finally {
       setLoading(false);
     }
   };
 
-  // Toggle the add remark input field
-  const toggleRemarkInput = (emp_id) => {
-    setRemarkInput((prev) => ({
-      ...prev,
-      [emp_id]: prev[emp_id] ? '' : '',
-    }));
-    setErrorMessage('');
-    setSuccessMessage('');
+  // Calculate total days from joiningDate to today
+  const calculateTotalDays = (joiningDate) => {
+    const startDate = new Date(joiningDate);
+    const today = new Date();
+    const diffTime = today - startDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // Including today
+    return diffDays;
+  };
+
+  // Calculate number of present days
+  const calculatePresentDays = (empId, joiningDate) => {
+    const startDate = new Date(joiningDate);
+    const today = new Date();
+    // Filter daily records for the employee from joining date to today
+    const presentRecords = dailyRecords.filter(record => {
+      const recordDate = new Date(record.checkIn);
+      return record.empId === empId && recordDate >= startDate && recordDate <= today;
+    });
+    return presentRecords.length;
+  };
+
+  // Calculate attendance percentage
+  const calculateAttendancePercentage = (presentDays, totalDays) => {
+    if (totalDays === 0) return '0.00%';
+    const percentage = (presentDays / totalDays) * 100;
+    return `${percentage.toFixed(2)}%`;
+  };
+
+  // Check if employee is present today
+  const isEmployeePresentToday = (empId) => {
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    return dailyRecords.some(record => 
+      record.empId === empId &&
+      record.checkIn >= todayStart &&
+      record.checkIn < todayEnd
+    );
+  };
+
+  // Get today's daily record for the employee
+  const getTodaysRecord = (empId) => {
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    return dailyRecords.find(record => 
+      record.empId === empId &&
+      record.checkIn >= todayStart &&
+      record.checkIn < todayEnd
+    );
+  };
+
+  // Format time
+  const formatTime = (time) => {
+    if (!time) return 'Absent';
+    const date = new Date(time);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -156,80 +192,53 @@ const EmployeeTable = () => {
                 <th>Total Attendance</th>
                 <th>Check-In Time</th>
                 <th>Check-Out Time</th>
-                <th>Work Assigned</th>
                 <th>Work Status</th>
-                <th>Remarks</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredEmployees.length > 0 ? (
-                filteredEmployees.map((employee) => (
-                  <tr key={employee.emp_id}>
-                    <td className="employee-name">
-                      {employee.dp ? (
-                        <img src={employee.dp} alt="DP" className="dp-image" />
-                      ) : (
-                        <div className="dp-placeholder">No Image</div>
-                      )}
-                      {employee.emp_name}
-                      <button
-                        className="hamburger-menu"
-                        onClick={() => handleHamburgerClick(employee)}
-                        aria-label={`View details of ${employee.emp_name}`}
-                      >
-                        &#x2630;
-                      </button>
-                    </td>
-                    <td>{employee.today_status === 'Present' ? '✅' : '❌'}</td>
-                    <td>{employee.total_attendances} / 30</td>
-                    <td>{employee.check_in_time ? new Date(employee.check_in_time).toLocaleTimeString() : 'N/A'}</td>
-                    <td>{employee.check_out_time ? new Date(employee.check_out_time).toLocaleTimeString() : 'N/A'}</td>
-                    <td>{employee.today_work_assigned}</td>
-                    <td>{employee.today_work_status}</td>
-                    <td>
-                      {employee.today_remarks ? (
-                        <span>{employee.today_remarks}</span>
-                      ) : (
+                filteredEmployees.map((employee) => {
+                  const totalDays = calculateTotalDays(employee.joiningDate);
+                  const presentDays = calculatePresentDays(employee.empId, employee.joiningDate);
+                  const attendancePercentage = calculateAttendancePercentage(presentDays, totalDays);
+                  const isPresentTodayFlag = isEmployeePresentToday(employee.empId);
+                  const todaysRecord = isPresentTodayFlag ? getTodaysRecord(employee.empId) : null;
+
+                  return (
+                    <tr key={employee.empId}>
+                      <td className="employee-name">
+                        <span className="name-link" onClick={() => handleNameClick(employee)}>
+                          {employee.dp ? (
+                            <img src={employee.dp} alt={`${employee.name} DP`} className="dp-image" />
+                          ) : (
+                            <div className="dp-placeholder">No Image</div>
+                          )}
+                          {employee.name}
+                        </span>
+                      </td>
+                      <td>{isPresentTodayFlag ? '✅' : '❌'}</td>
+                      <td>
+                        {presentDays} / {totalDays} ({attendancePercentage})
+                      </td>
+                      <td>{todaysRecord ? formatTime(todaysRecord.checkIn) : 'Absent'}</td>
+                      <td>{todaysRecord ? formatTime(todaysRecord.checkOut) : 'Absent'}</td>
+                      <td>{todaysRecord ? todaysRecord.work.workStatus : 'Absent'}</td>
+                      <td>
                         <button
-                          className="add-remark-btn"
-                          onClick={() => toggleRemarkInput(employee.emp_id)}
+                          className="delete-btn"
+                          onClick={() => handleDelete(employee.empId)}
+                          aria-label={`Delete ${employee.name}`}
                         >
-                          Add Remark
+                          Delete
                         </button>
-                      )}
-                      {remarkInput.hasOwnProperty(employee.emp_id) && (
-                        <div className="remark-input-container">
-                          <input
-                            type="text"
-                            value={remarkInput[employee.emp_id] || ''}
-                            onChange={(e) => handleRemarksChange(employee.emp_id, e.target.value)}
-                            placeholder="Enter remark"
-                            className="remark-input"
-                          />
-                          <button
-                            className="submit-remark-btn"
-                            onClick={() => handleAddRemark(employee)}
-                          >
-                            Submit
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                    <td>
-                      <button
-                        className="delete-btn"
-                        onClick={() => handleDelete(employee.emp_id)}
-                        aria-label={`Delete ${employee.emp_name}`}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan="9" className="no-data">
+                  <td colSpan="7" className="no-data">
                     No employees found.
                   </td>
                 </tr>
@@ -244,12 +253,11 @@ const EmployeeTable = () => {
             <div className="employee-dialog">
               <h3>Employee Details</h3>
               <div className="dialog-content">
-                <p><strong>ID:</strong> {selectedEmployee.emp_id}</p>
-                <p><strong>Name:</strong> {selectedEmployee.emp_name}</p>
+                <p><strong>ID:</strong> {selectedEmployee.empId}</p>
+                <p><strong>Name:</strong> {selectedEmployee.name}</p>
                 <p><strong>Email:</strong> {selectedEmployee.email}</p>
-                <p><strong>Job Title:</strong> {selectedEmployee.job_title}</p>
                 <p><strong>Contact:</strong> {selectedEmployee.contact}</p>
-                <p><strong>Work Type:</strong> {selectedEmployee.workertype}</p>
+                <p><strong>Work Type:</strong> {selectedEmployee.workertype || 'N/A'}</p>
                 <p><strong>Joining Date:</strong> {new Date(selectedEmployee.joiningDate).toLocaleDateString()}</p>
                 <button className="close-dialog-btn" onClick={() => setShowDialog(false)}>
                   Close
@@ -263,4 +271,4 @@ const EmployeeTable = () => {
   );
 };
 
-export default EmployeeTable;
+export default ViewEmployee;

@@ -9,5 +9,5 @@ const superadminSchema = new mongoose.Schema({
   }, { timestamps: true });  // Automatically adds createdAt and updatedAt
   
 
-  module.exports = mongoose.model('superadmin', superadminSchema);
+  module.exports = mongoose.model('superadmins', superadminSchema);
 

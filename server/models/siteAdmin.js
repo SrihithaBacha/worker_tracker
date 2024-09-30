@@ -10,5 +10,5 @@ const siteadminSchema = new mongoose.Schema({
   }, { timestamps: true });
   
 
-  module.exports = mongoose.model('siteadmin', siteadminSchema);
+  module.exports = mongoose.model('siteadmins', siteadminSchema);
 

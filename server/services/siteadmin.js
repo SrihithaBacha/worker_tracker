@@ -80,8 +80,9 @@ const addEmployee = async (req, res) => {
 // Get Employees by Site ID
 const getEmployees = async (req, res) => {
   try {
-    const { siteId } = req.params;
-    const employees = await Employee.find({ siteId, isDeleted: false }).select('-password');
+    const { id } = req.params;
+    const employees = await Employee.find({ "siteId" : id});
+    console.log("employee",employees);
     res.status(200).json({ employees });
   } catch (error) {
     console.error('Error fetching employees:', error);
@@ -236,8 +237,10 @@ const updateDailyRecords = async (req, res) => {
 const removeEmployee = async (req, res) => {
   try {
     const { id: empId } = req.params;
-
-    const employee = await Employee.findOne({ empId, isDeleted: false });
+    console.log(empId);  
+    const employee = await Employee.findOne({
+     empId
+    });
 
     if (!employee) {
       return res.status(404).json({ message: 'Employee not found.' });
@@ -252,6 +255,7 @@ const removeEmployee = async (req, res) => {
     res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
 
 const getSiteByEmail = async(req,res)=>{
   try {
