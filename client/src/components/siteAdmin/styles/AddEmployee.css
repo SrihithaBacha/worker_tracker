@@ -1,0 +1,80 @@
+.add-employee-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  font-family: 'Arial', sans-serif;
+  margin-bottom: 20px;
+}
+
+.add-employee-form {
+  display: flex;
+  flex-direction: column;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse; /* Removes spacing between table cells */
+}
+
+td {
+  padding: 10px; /* Padding around table cells */
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #34495e;
+}
+
+input {
+  width: 100%; /* Make input take full width of table cell */
+  padding: 10px;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+.submit-button {
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #2ecc71;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 20px; /* Added space above the button */
+}
+
+.submit-button:hover {
+  background-color: #27ae60;
+}
+
+.error-message {
+  color: #e74c3c;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 15px; /* Space above error message */
+}
+
+.success-message {
+  color: #2ecc71;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 15px; /* Space above success message */
+}

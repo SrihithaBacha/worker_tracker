@@ -2,9 +2,6 @@ const SuperAdmin = require('../models/superAdmin');
 const SiteAdmin = require('../models/siteAdmin');
 const Employee = require('../models/employee');
 
-// Remove bcrypt
-// const bcrypt = require('bcrypt');
-
 const findUserByRole = async (role, password,email) => {
   let user;
   

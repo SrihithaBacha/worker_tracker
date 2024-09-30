@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-require('../config/database');
+const mongoose = require('../config/database');
 
 const siteadminSchema = new mongoose.Schema({
     siteadminId: { type: String, required: true, unique: true },
@@ -11,5 +10,5 @@ const siteadminSchema = new mongoose.Schema({
   }, { timestamps: true });
   
 
-  module.exports = mongoose.model('siteadmin', siteadminSchema);
+  module.exports = mongoose.model('siteadmins', siteadminSchema);
 

@@ -13,10 +13,10 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id, role: role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(200).json({ message: 'Login successful', token ,role:role});
+    res.status(200).json({ message: 'Login successful', token ,role:role ,email:user.email});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { login };
+module.exports = { login };

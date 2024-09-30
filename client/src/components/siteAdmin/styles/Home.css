@@ -1,0 +1,283 @@
+/* src/components/siteAdmin/Home.css */
+
+.home-container {
+  padding: 20px;
+  display: flex;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+/* Loading and Error States */
+.loading, .error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  color: #555;
+}
+
+.error p {
+  color: red;
+  margin-bottom: 20px;
+}
+
+.error button {
+  padding: 10px 20px;
+  background-color: #36A2EB;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.error button:hover {
+  background-color: #2590e0;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #36A2EB; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.spinner-small {
+  border: 4px solid #f3f3f3; /* Light grey */
+  border-top: 4px solid #36A2EB; /* Blue */
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-top: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Site Information Section */
+.site-info {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex: 1 1 45%;
+  min-width: 300px;
+}
+
+.site-info h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.site-details {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.site-image {
+  width: 200px;
+  height: 200px;
+  border: 2px solid #36A2EB;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.site-image:hover {
+  transform: scale(1.05);
+}
+
+.file-input {
+  padding: 5px;
+}
+
+.site-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-text p {
+  margin: 10px 0;
+  font-size: 1em;
+  color: #555;
+}
+
+.site-text p strong {
+  color: #333;
+}
+
+.site-text textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 80px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.site-text button {
+  padding: 10px 20px;
+  background-color: #36A2EB;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.site-text button:hover {
+  background-color: #2590e0;
+}
+
+/* Attendance Overview Section */
+.attendance-info {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex: 1 1 45%;
+  min-width: 300px;
+}
+
+.attendance-info h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 20px auto;
+}
+
+.attendance-stats {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+}
+
+.attendance-stats p {
+  font-size: 1em;
+  color: #555;
+}
+
+/* Site Progress Section */
+.site-progress {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 40px auto 0 auto;
+}
+
+.site-progress h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.progress-bar input[type="range"] {
+  flex: 1;
+}
+
+.progress-bar span {
+  font-size: 1em;
+  color: #555;
+}
+
+.progress-chart {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .home-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .site-info, .attendance-info {
+    flex: 1 1 100%;
+    max-width: 600px;
+  }
+
+  .site-details {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .site-image {
+    width: 150px;
+    height: 150px;
+  }
+
+  .chart-container, .progress-chart {
+    max-width: 100%;
+  }
+
+  .attendance-stats {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .site-info, .attendance-info, .site-progress {
+    padding: 15px;
+  }
+
+  .site-image {
+    width: 120px;
+    height: 120px;
+  }
+
+  .site-text textarea {
+    font-size: 0.9em;
+  }
+
+  .site-text button {
+    font-size: 0.9em;
+    padding: 8px 16px;
+  }
+
+  .attendance-stats p {
+    font-size: 0.9em;
+  }
+
+  .progress-bar span {
+    font-size: 0.9em;
+  }
+}

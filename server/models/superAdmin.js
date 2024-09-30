@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-require('../config/database');
+const mongoose = require('../config/database');
 
 const superadminSchema = new mongoose.Schema({
     id: { type: String, required: true },  // Unique ID for the superadmin
@@ -10,5 +9,5 @@ const superadminSchema = new mongoose.Schema({
   }, { timestamps: true });  // Automatically adds createdAt and updatedAt
   
 
-  module.exports = mongoose.model('superadmin', superadminSchema);
+  module.exports = mongoose.model('superadmins', superadminSchema);
 

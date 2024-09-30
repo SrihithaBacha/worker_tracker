@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-require('../config/database');
+const mongoose = require('../config/database');
 
 const employeeSchema = new mongoose.Schema({
     empId: { type: String, required: true, unique: true },
@@ -8,6 +7,7 @@ const employeeSchema = new mongoose.Schema({
     password: { type: String, required: true },  // Store as a hashed password
     name: { type: String, required: true },
     contact: { type: String, required: true },
+    workertype:{type:String},
     dp: { type: String },  // URL to the employee's display picture
     joiningDate: { type: Date, required: true },
     isDeleted: { type: Boolean, default: false }
@@ -15,5 +15,5 @@ const employeeSchema = new mongoose.Schema({
   
   
 
-  module.exports = mongoose.model('employee', employeeSchema);
+  module.exports = mongoose.model('employees', employeeSchema);
 

@@ -1,0 +1,183 @@
+/* siteAdmin.css */
+
+.welcome-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #3f51b5;
+  padding: 1rem;
+  color: white;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav-links {
+  list-style-type: none;
+  display: flex;
+  gap: 1.5rem;
+}
+.welcome-container.loading,
+.welcome-container.error {
+  font-size: 1.2em;
+  color: #555;
+  margin-top: 50px;
+  text-align: center;
+}
+
+.welcome-container.error p {
+  color: red;
+  margin-bottom: 20px;
+}
+
+.welcome-container.error button {
+  padding: 10px 20px;
+  background-color: #36A2EB;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.welcome-container.error button:hover {
+  background-color: #2590e0;
+}
+
+.welcome-container h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.sites-section {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.sites-section h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.sites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.site-card {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.site-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.site-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.site-details {
+  padding: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-details h3 {
+  margin-bottom: 10px;
+  color: #36A2EB;
+}
+
+.site-details p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 0.95em;
+  flex-grow: 1;
+}
+
+.site-details p strong {
+  color: #333;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #36A2EB;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2590e0;
+}
+
+/* Spinner Styles */
+.spinner {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #36A2EB; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .sites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .site-image {
+    height: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .site-image {
+    height: 160px;
+  }
+}
+
+@media (max-width: 576px) {
+  .sites-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-image {
+    height: 150px;
+  }
+}
