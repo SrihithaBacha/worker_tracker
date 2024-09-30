@@ -10,7 +10,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import './employee.css';
 
-const Employee = ({ employeeId, siteId }) => {
+const Employee = () => {
+  const user= JSON.parse(localStorage.getItem('user'));
+  const employeeId=user.empId;
+  
+  if (!employeeId) {
+      throw new Error('User not found in localStorage');
+  }
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));

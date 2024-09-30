@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { Button, TextField, CircularProgress } from '@mui/material';
 
-const WorkPost = ({ siteId }) => {
+const WorkPost = () => {
+  const user= JSON.parse(localStorage.getItem('user'));
+  const siteId=user.siteId;
+  if (!siteId) {
+      throw new Error('User not found in localStorage');
+  }
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [description, setDescription] = useState('');

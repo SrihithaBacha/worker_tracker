@@ -7,9 +7,7 @@ const findUserByRole = async (role, password,email) => {
   
   switch (role) {
     case 'superAdmin':
-      console.log("role : "+role+"password:"+password+"email:"+email);
       user = await SuperAdmin.findOne({ email:email,password:password, isDeleted: false });
-      console.log(user);
       break;
     case 'siteAdmin':
       user = await SiteAdmin.findOne({ email, password,isDeleted: false });
@@ -20,7 +18,7 @@ const findUserByRole = async (role, password,email) => {
     default:
       throw new Error('Invalid role');
   }
-  return user;
+  return [user,role];
 };
 module.exports = {
   findUserByRole,

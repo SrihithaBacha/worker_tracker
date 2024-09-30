@@ -36,7 +36,7 @@
     border-radius: 10px;
 }
 
-.login-container input {
+.login-container .input {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
@@ -45,7 +45,7 @@
     font-size: 16px;
 }
 
-.login-container input:focus {
+.login-container .input:focus {
     outline: none;
     border-color: #007bff;
 }
@@ -89,13 +89,13 @@ form {
     width: 300px;
 }
 
-input {
+.input {
     margin: 10px 0;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-input:focus{
+.input:focus{
     transition: transform 0.4s ease-in-out;
     transform: scale(1.04);
     outline: none;
@@ -117,13 +117,14 @@ input:focus{
     cursor: pointer;
 }
 .pagehead {
-    margin-bottom: 20px;
     font-size: 24px;
     color: #fff;
     text-align: center;
     background-color: blue;
     padding: 8px;
     border-radius: 8px;
+    margin-left: 10px;
+    margin-right:10px ;
 }
 #logintext{
     font-weight: bold;
