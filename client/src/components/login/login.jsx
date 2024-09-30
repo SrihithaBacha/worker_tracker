@@ -6,6 +6,7 @@ import './login.css';
 function Login() {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [loginStatus,setLoginStatus]=useState('');
     const [role, setRole] = useState('employee');
     const navigate = useNavigate();
 
@@ -14,11 +15,13 @@ function Login() {
         try {
             // console.log("id:"+id+" password:"+password+" role:"+role);
             const user = await login(email, password, role);
+            setLoginStatus('');
             localStorage.setItem("id",user.id);
             if (user.role === 'employee') navigate('/employee');
             else if (user.role === 'superAdmin') navigate('/superAdmin');
             else if (user.role === 'siteAdmin') navigate('/siteAdmin');
         } catch (error) {
+            setLoginStatus(localStorage.getItem('loginStatus'));
             console.error('Login failed', error);
         }
     };
@@ -84,6 +87,7 @@ function Login() {
 
                 <button type="submit">Login as {role}</button>
             </form>
+            <h3 className='loginStatus'>{loginStatus}</h3>
         </div>
         </div>
         </>
