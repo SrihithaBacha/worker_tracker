@@ -14,15 +14,18 @@ import Modal from "./Modal";
 const SuperAdmin = () => {
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [updateStatus,setUpdateStatus]=useState(false);
-  const [deleteStatus,setDeleteStatus]=useState(false);
+  const [updateStatus, setUpdateStatus] = useState(false);
+  const [islogout, setIslogout] = useState(false);
+  const [deleteStatus, setDeleteStatus] = useState(false);
   const [sites, setSites] = useState([]);
+  const [loggeduserEmail, setLoggeduserEmail] = useState('');
+  const [loggeduserId, setLoggeduserId] = useState('');
   const [sitePopup, setSitePopup] = useState(false);
   const [siteAdminPopup, setSiteAdminPopup] = useState(false);
   const [superAdminPopup, setSuperAdminPopup] = useState(false);
   const [siteadmins, setSiteadmins] = useState([]);
-  const [deleteSiteName,setDeleteSiteName]=useState('');
-  const [deleteSiteId,setDeleteSiteId]=useState('');
+  const [deleteSiteName, setDeleteSiteName] = useState('');
+  const [deleteSiteId, setDeleteSiteId] = useState('');
   const [updateSiteForm, setUpdateSiteForm] = useState(
     {
       siteId: "",
@@ -89,7 +92,10 @@ const SuperAdmin = () => {
     if (!token) {
       navigate('/login'); // Redirect if not logged in
     } else {
-      fetchSiteAdmins(); // Fetch site admins when the component mounts
+      const logged = JSON.parse(localStorage.getItem('user'));
+      setLoggeduserEmail(logged.email);
+      setLoggeduserId(logged.id);
+      fetchSiteAdmins(logged); // Fetch site admins when the component mounts
     }
   }, []);
   useEffect(() => {
@@ -156,75 +162,85 @@ const SuperAdmin = () => {
     // Combine both parts and ensure the total length does not exceed 8
     return (namePart + randomNum).substring(0, 8);
   };
-const updateSite = (site) => {
-  // Open the modal
-  setUpdateModalOpen(true);
+  const handleLogout = () => {
+    setIslogout(true);
+    setTimeout(() => {
+      setIslogout(true);
+      localStorage.removeItem('user');
+      localStorage.removeItem('id');
+      navigate('/login');
+    }, 2000);
 
-  // Find the matching site in the sites array
-  const matchedSite = sites.find(s => s.siteId === site.siteId);
-
-  // Only update the form state if a matching site is found
-  if (matchedSite) {
-    setUpdateSiteForm({
-      siteId: matchedSite.siteId,
-      name: matchedSite.name,
-      location: matchedSite.location,
-      siteadminId: matchedSite.siteadminId,
-      progress: matchedSite.progress,
-      progressImages: matchedSite.progressImages,
-      siteImage: matchedSite.siteImage,
-      siteInfo: matchedSite.siteInfo,
-    });
   }
-};
-const deleteSite=(site)=>{
+  const updateSite = (site) => {
+    // Open the modal
+    setUpdateModalOpen(true);
 
-  setDeleteSiteName(site.name);
-  setDeleteSiteId(site.siteId);
+    // Find the matching site in the sites array
+    const matchedSite = sites.find(s => s.siteId === site.siteId);
 
-  setDeleteModalOpen(true);
-}
-const handleDeleteSite=async ()=>{
-  const response = await axios.delete(`http://localhost:5000/api/sites/${deleteSiteId}`);
- if(response.data.message=="Site deleted successfully"){
-  setDeleteStatus(true);
-          setTimeout(() => {
-            setDeleteStatus(false);
-              setDeleteModalOpen(false); // Close the modal after 2 seconds
-          }, 2000);
-          fetchSiteAdmins(); 
-          setSelectedCard(sites[0])
- }
-}
-const handleUpdateSite=async (e)=>{
-  e.preventDefault();
+    // Only update the form state if a matching site is found
+    if (matchedSite) {
+      setUpdateSiteForm({
+        siteId: matchedSite.siteId,
+        name: matchedSite.name,
+        location: matchedSite.location,
+        siteadminId: matchedSite.siteadminId,
+        progress: matchedSite.progress,
+        progressImages: matchedSite.progressImages,
+        siteImage: matchedSite.siteImage,
+        siteInfo: matchedSite.siteInfo,
+      });
+    }
+  };
+  const deleteSite = (site) => {
+
+    setDeleteSiteName(site.name);
+    setDeleteSiteId(site.siteId);
+
+    setDeleteModalOpen(true);
+  }
+  const handleDeleteSite = async () => {
+    const response = await axios.delete(`http://localhost:5000/api/sites/${deleteSiteId}`);
+    if (response.data.message == "Site deleted successfully") {
+      setDeleteStatus(true);
+      setTimeout(() => {
+        setDeleteStatus(false);
+        setDeleteModalOpen(false); // Close the modal after 2 seconds
+      }, 2000);
+      fetchSiteAdmins();
+      setSelectedCard(sites[0])
+    }
+  }
+  const handleUpdateSite = async (e) => {
+    e.preventDefault();
     try {
       const res = await updateSiteAdmin(
         {
           siteId: updateSiteForm.siteId,
           name: updateSiteForm.name,
           location: updateSiteForm.location,
-          siteadminId:updateSiteForm.siteadminId,
+          siteadminId: updateSiteForm.siteadminId,
           progress: updateSiteForm.progress,
-          progressImages:updateSiteForm.progressImages,
-          siteImage:updateSiteForm.siteImage,
-          siteInfo:updateSiteForm.siteInfo,
+          progressImages: updateSiteForm.progressImages,
+          siteImage: updateSiteForm.siteImage,
+          siteInfo: updateSiteForm.siteInfo,
         });
-        if (res.message === "Site updated successfully") {
-          setUpdateStatus(true);
-          
-          // Set a timeout for 2 seconds (2000 milliseconds)
-          setTimeout(() => {
-            setUpdateStatus(false);
-              setUpdateModalOpen(false); // Close the modal after 2 seconds
-          }, 2000);
-          fetchSiteAdmins(); 
+      if (res.message === "Site updated successfully") {
+        setUpdateStatus(true);
+
+        // Set a timeout for 2 seconds (2000 milliseconds)
+        setTimeout(() => {
+          setUpdateStatus(false);
+          setUpdateModalOpen(false); // Close the modal after 2 seconds
+        }, 2000);
+        fetchSiteAdmins();
       }
-      
+
     } catch (error) {
       console.error('Error updating site:', error.response ? error.response.data : error.message);
     }
-}
+  }
   const handleAddSiteAdmin = async (e) => {
     e.preventDefault();
     const user = JSON.parse(localStorage.getItem('user'))
@@ -242,7 +258,7 @@ const handleUpdateSite=async (e)=>{
         });
       if (res.message === "SiteAdmin added successfully") {
         setSiteAdminPopup(true);
-        
+
       }
     } catch (error) {
       console.error('Error adding site:', error.response ? error.response.data : error.message);
@@ -351,84 +367,93 @@ const handleUpdateSite=async (e)=>{
               <path d="M3 0h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm0 8h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z" />
             </svg>View site admins
           </li>
+          <li
+            onClick={() => setView('profileView')}
+            className={view === 'profileView' ? 'active' : ''} // Highlight if active
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+              <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+            </svg>Profile
+          </li>
         </ul>
       </nav>
 
       <div className="mainContainer">
-      {isUpdateModalOpen && (
-        <div className="modal-overlay" onClick={() => setUpdateModalOpen(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <h2 className="form-title">Update a New Site</h2>
-            <form onSubmit={handleUpdateSite} className="form">
-              <input
-                type="text"
-                placeholder="Site Name"
-                value={updateSiteForm.name}
-                onChange={(e) => setUpdateSiteForm({ ...updateSiteForm, name: e.target.value })}
-                required
-                className="input-field"
-              />
+        {isUpdateModalOpen && (
+          <div className="modal-overlay" onClick={() => setUpdateModalOpen(false)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <h2 className="form-title">Update a New Site</h2>
+              <form onSubmit={handleUpdateSite} className="form">
+                <input
+                  type="text"
+                  placeholder="Site Name"
+                  value={updateSiteForm.name}
+                  onChange={(e) => setUpdateSiteForm({ ...updateSiteForm, name: e.target.value })}
+                  required
+                  className="input-field"
+                />
 
-              <input
-                type="text"
-                placeholder="Location"
-                value={updateSiteForm.location}
-                onChange={(e) => setUpdateSiteForm({ ...updateSiteForm, location: e.target.value })}
-                required
-                className="input-field"
-              />
-              <select
-                value={updateSiteForm.siteadminId}
-                onChange={(e) => setUpdateSiteForm({ ...updateSiteForm, siteadminId: e.target.value })}
-                required
-                className="select-field"
-              >
-                <option value="">Select Site Admin</option>
-                {siteadmins.map((admin) => (
-                  <option key={admin.siteadminId} value={admin.siteadminId}>
-                    {admin.siteadminId}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                placeholder="Image URL"
-                value={updateSiteForm.siteImage}
-                onChange={(e) => setUpdateSiteForm({ ...updateSiteForm, siteImage: e.target.value })}
-                required
-                className="input-field"
-              />
-              <input
-                type="text"
-                placeholder="Info"
-                value={updateSiteForm.siteInfo}
-                onChange={(e) => setUpdateSiteForm({ ...updateSiteForm, siteInfo: e.target.value })}
-                required
-                className="input-field"
-              />
-               <button type="submit" className="submit-button">Update Site</button>
-            </form>
-            {updateStatus && (
-              <Popup message="Site updated successfully" />
-            )}
+                <input
+                  type="text"
+                  placeholder="Location"
+                  value={updateSiteForm.location}
+                  onChange={(e) => setUpdateSiteForm({ ...updateSiteForm, location: e.target.value })}
+                  required
+                  className="input-field"
+                />
+                <select
+                  value={updateSiteForm.siteadminId}
+                  onChange={(e) => setUpdateSiteForm({ ...updateSiteForm, siteadminId: e.target.value })}
+                  required
+                  className="select-field"
+                >
+                  <option value="">Select Site Admin</option>
+                  {siteadmins.map((admin) => (
+                    <option key={admin.siteadminId} value={admin.siteadminId}>
+                      {admin.siteadminId}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  placeholder="Image URL"
+                  value={updateSiteForm.siteImage}
+                  onChange={(e) => setUpdateSiteForm({ ...updateSiteForm, siteImage: e.target.value })}
+                  required
+                  className="input-field"
+                />
+                <input
+                  type="text"
+                  placeholder="Info"
+                  value={updateSiteForm.siteInfo}
+                  onChange={(e) => setUpdateSiteForm({ ...updateSiteForm, siteInfo: e.target.value })}
+                  required
+                  className="input-field"
+                />
+                <button type="submit" className="submit-button">Update Site</button>
+              </form>
+              {updateStatus && (
+                <Popup message="Site updated successfully" />
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {isDeleteModalOpen && (
-        <div className="modal-overlay" onClick={() => setDeleteModalOpen(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-          <h2 className="form-title">Delete</h2>
-            <p>Are you sure you want to delete? <p className="delete-site-name">{deleteSiteName}</p></p>
-            <button className="delete-site-conform" onClick={() => handleDeleteSite(deleteSiteId)}>Confirm</button> 
+        {isDeleteModalOpen && (
+          <div className="modal-overlay" onClick={() => setDeleteModalOpen(false)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <h2 className="form-title">Delete</h2>
+              <p>Are you sure you want to delete? <p className="delete-site-name">{deleteSiteName}</p></p>
+              <button className="delete-site-conform" onClick={() => handleDeleteSite(deleteSiteId)}>Confirm</button>
 
-            <button className="delete-site-cancel" onClick={() => setDeleteModalOpen(false)}>Close</button>
-            {deleteStatus && (
-              <Popup message="Site deleted successfully" />
-            )}
+              <button className="delete-site-cancel" onClick={() => setDeleteModalOpen(false)}>Close</button>
+              {deleteStatus && (
+                <Popup message="Site deleted successfully" />
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
         {view === 'home' && (
           <div className="container">
             <div className="card-container">
@@ -458,15 +483,15 @@ const handleUpdateSite=async (e)=>{
               )}
               {selectedCard && !isAnimating && (
 
-                <div className="detail-content opening" style={{paddingRight:"20px"}}>
+                <div className="detail-content opening" style={{ paddingRight: "20px" }}>
                   <div className="site-actions">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" onClick={() => updateSite(selectedCard)}ill="currentColor" className="bi bi-pencil-square site-edit" viewBox="0 0 16 16">
-                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                  </svg>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" onClick={() => deleteSite(selectedCard)} fill="currentColor" className="bi bi-trash-fill site-delete" viewBox="0 0 16 16">
-                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-                  </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" onClick={() => updateSite(selectedCard)} ill="currentColor" className="bi bi-pencil-square site-edit" viewBox="0 0 16 16">
+                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                      <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" onClick={() => deleteSite(selectedCard)} fill="currentColor" className="bi bi-trash-fill site-delete" viewBox="0 0 16 16">
+                      <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                    </svg>
                   </div>
                   <p id="selectedCardName">{selectedCard.name}</p>
                   <img src={selectedCard.siteImage} alt={selectedCard.name} style={{ width: '100%', borderRadius: '8px', marginBottom: '10px' }} />
@@ -498,6 +523,14 @@ const handleUpdateSite=async (e)=>{
                   </ul>
                   <div className="circleProgress"><CircleProgressBar className="circleProgress" size={150} progress={selectedCard.progress} strokeWidth={10} />
                   </div>
+
+                  <div className="progress-container">
+                    <h2 className="form-title">progress images</h2>
+                    {selectedCard.progressImages.map((imageSrc, index) => (
+                      <img className="progress-image" key={index} src={`http://localhost:5000/assets/${imageSrc}`} alt={`progress step ${index + 1}`} />
+                    ))}
+                  </div>
+
 
                 </div>
               )}
@@ -664,6 +697,25 @@ const handleUpdateSite=async (e)=>{
           </div>
         )}
 
+
+        {view === 'profileView' && (
+          <div className="profile-view">
+            <h2 className="form-title">Profile</h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-person-circle superadmin-profile" viewBox="0 0 16 16">
+              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+              <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+            </svg>
+            <p>You are logged in as  <span className="loggeduser-data">{loggeduserEmail}
+            </span>  with ID  <span className="loggeduser-data">{loggeduserId}</span></p>
+            <button onClick={() => handleLogout()} className="logout-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+              <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+            </svg>Logout</button>
+            {islogout && (
+              <Popup message="You are loggedout successfully. Redirecting to loginPage...." />
+            )}
+          </div>
+        )}
 
       </div>
     </>

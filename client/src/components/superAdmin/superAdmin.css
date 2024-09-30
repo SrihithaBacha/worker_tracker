@@ -72,7 +72,7 @@ body {
   position: relative; /* For child positioning */
 }
 
-.card:hover {
+.cardCon:hover {
   transform: translateY(-5px) scale(1.03); /* Slightly lift and scale on hover */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); /* Enhance shadow on hover */
 }
@@ -234,7 +234,8 @@ body {
 .detail-content.closing {
   opacity: 0; /* Fade out */
 }
-.add-site-container,.add-siteadmin-container,.add-superadmin-container ,.modal-content,.login-container{
+.add-site-container,.add-siteadmin-container,.add-superadmin-container ,.modal-content,.login-container,
+.profile-view,.add-employee-container{
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -282,7 +283,9 @@ li{
 .view-siteadmins-container ,
 .add-superadmin-container,
 .modal-content,
-.login-container{
+.login-container,
+.profile-view,
+.add-employee-container{
   background: linear-gradient(135deg, #fff 0%); /* Gradient background */
   padding: 40px;
   border-radius: 20px; /* Rounded corners */
@@ -714,3 +717,41 @@ h2 {
   color: red;
   font-size: 20px;
 }
+.superadmin-profile{
+  width: 100px;
+  height: 100px;
+}
+.loggeduser-data{
+  color: green;
+  font-weight: bold;
+  font-weight: 30px;
+}
+.logout-button{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background-color: blue;
+  border-radius: 8px;
+  border: none;
+  color: #fff;
+  width: 150px;
+  height: 30px;
+  font-size: 15px;
+  font-weight: bold;
+  transition: transform 0.3s ease-in;
+}
+.logout-button:hover{
+  transform: scale(1.1);
+  background-color: #1b0392;
+}
+.progress-image{
+      width: 200px;
+      height: 200px;
+      margin : 10px;
+}
+/* .progress-container{
+  display: flex;
+  flex-direction: row;
+} */

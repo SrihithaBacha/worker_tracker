@@ -67,35 +67,39 @@ const AddEmployee = () => {
   return (
     <><Navbar />
     <div className="add-employee-container">
-      <h2>Add Employee</h2>
+      <h2 className='form-title'>Add Employee</h2>
       <form onSubmit={handleSubmit} className="add-employee-form">
         <div className="form-group">
-          <label htmlFor="name">Name:</label>
+      
           <input
             type="text"
             id="name"
             name="name"
+            className='input-field'
+            placeholder='Name'
             value={formData.name}
             onChange={handleChange}
             required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="email">Email:</label>
           <input
             type="email"
             id="email"
             name="email"
+            className='input-field'
+            placeholder='Email'
             value={formData.email}
             onChange={handleChange}
             required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="contact">Contact:</label>
           <input
             type="text"
             id="contact"
+            placeholder='Contact'
+            className='input-field'
             name="contact"
             value={formData.contact}
             onChange={handleChange}
@@ -103,16 +107,18 @@ const AddEmployee = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="dp">Display Picture URL:</label>
+  
           <input
             type="text"
             id="dp"
+            className='input-field'
+            placeholder='Display Picture URL'
             name="dp"
             value={formData.dp}
             onChange={handleChange}
           />
         </div>
-        <button type="submit" className="submit-button">Add Employee</button>
+        <button type="submit" className="submit-button" >Add Employee</button>
       </form>
       {error && <p className="error-message">{error}</p>}
       {success && <p className="success-message">{success}</p>}
