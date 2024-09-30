@@ -14,16 +14,14 @@ app.use(cors({
 app.use(express.json());
 dotenv.config();
 app.use(express.json({ limit: '10mb' }));
-// Increase URL-encoded payload limit to 10MB
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 app.post('/api/login',login);
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 //app.use( require("./controllers/employee") );
 app.use( require("./controllers/siteadmin") );
 app.use( require("./controllers/superadmin") );
-
 app.use('/api', attendanceRoutes);
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.post('/api/sites/:siteId/images', async (req, res) => {
   try {
@@ -48,41 +46,11 @@ app.post('/api/sites/:siteId/images', async (req, res) => {
   }
 });
 
-
-const multer = require('multer');
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'assets'); // Store images in the assets folder
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
-
-const upload = multer({ storage });
-
-app.post('/sites/progressImages', upload.single('image'), async (req, res) => {
-  const { siteId } = req.body;
-  const imagePath = req.file.filename; // Get the stored image filename
-
-  // Update the site with the new image reference in your database
-  // Assuming you have a Site model
-  const updatedSite = await Site.findOneAndUpdate(
-    { "siteId": siteId },  // Use an object as the filter
-    { $push: { progressImages: imagePath } },
-    { new: true }  // Return the updated document
-  );
-  
-  res.json({ progressImages: updatedSite.progressImages });
-});
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// Error handling middleware (optional but recommended)
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
