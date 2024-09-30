@@ -28,10 +28,6 @@ const PrivateRoute = ({ element: Component, allowedRoles }) => {
 function App() {
   const employeeId = '66f645e5b11fe15eb98ae94b';
   const siteId = '66f64661b11fe15eb98ae952';
-  // make the above values dynamic by fetching from the user object from the local storage 
-  // the values are from dailyRecords schema in the server side 
-  // the values are the _id of the user dailyrecoreds in the dailyrecords collection in the database
-
   return (
     <div className="App">
       <Router>
@@ -43,16 +39,18 @@ function App() {
           {/* Employee Routes */}
           <Route path="/employee" element={<PrivateRoute allowedRoles={['employee']} element={<Employee />} />}>
             <Route index element={<WorkerInfo employeeId={employeeId} />} />
-            <Route path="worker-info" element={<WorkerInfo employeeId={employeeId} />} />
-            <Route path="attendance" element={<Attendance employeeId={employeeId} siteId={siteId} />} />
-            <Route path="attendance-table" element={<AttendanceTable employeeId={employeeId} />} />
-            <Route path="work-post" element={<WorkPost employeeId={employeeId} siteId={siteId} />} />
-            <Route path="logout" element={<Logout employeeId={employeeId} siteId={siteId} />} />
+            <Route path="worker-info" element={<WorkerInfo/>} />
+            <Route path="attendance" element={<Attendance  />} />
+            <Route path="attendance-table" element={<AttendanceTable />} />
+            <Route path="work-post" element={<WorkPost/>} />
+            <Route path="logout" element={<Logout  />} />
           </Route>
 
                 <Route path="/employee" element={<Employee />} />
                 <Route path="/superAdmin" element={<SuperAdmin />} />
                 <Route path="/siteAdmin" element={<SiteAdmin />} />
+
+                {/* site-admin routes */}
 
                 <Route path="/siteAdmin/site-home" element={<Home />} />
                 <Route path="/siteAdmin/add-employee" element={<AddEmployee />} />

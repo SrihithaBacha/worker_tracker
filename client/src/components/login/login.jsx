@@ -3,12 +3,6 @@ import { login } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 
-import axios from 'axios';
-
-// Enable CORS for all requests
-axios.defaults.baseURL = 'http://localhost:5000'; // Replace with your backend URL
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-
 function Login() {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
@@ -20,7 +14,7 @@ function Login() {
         try {
             // console.log("id:"+id+" password:"+password+" role:"+role);
             const user = await login(email, password, role);
-            console.log(user);
+            localStorage.setItem("id",user.id);
             if (user.role === 'employee') navigate('/employee');
             else if (user.role === 'superAdmin') navigate('/superAdmin');
             else if (user.role === 'siteAdmin') navigate('/siteAdmin');
@@ -36,8 +30,9 @@ function Login() {
             <img src="https://img.freepik.com/free-vector/mobile-login-concept-illustration_114360-83.jpg?size=626&ext=jpg&ga=GA1.1.1581672273.1719949994&semt=ais_hybrid"/>
         <div className="login-container">
             <form onSubmit={handleSubmit}>
-                <p id='logintext'>Login</p>
+                <h2 className='form-title'>Login</h2>
                 <input
+                className='input-field'
                     type="text"
                     placeholder="Email"
                     value={email}
@@ -45,6 +40,7 @@ function Login() {
                     required
                 />
                 <input
+                className='input-field'
                     type="password"
                     placeholder="Password"
                     value={password}

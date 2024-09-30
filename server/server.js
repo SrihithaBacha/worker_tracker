@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const path = require('path');
 const cors = require('cors');
 const {login}=require('./controllers/authController');
 const attendanceRoutes = require('./controllers/dailyRecords.js');
@@ -11,18 +12,18 @@ app.use(cors({
     origin: '*'
 }));
 app.use(express.json());
-dotenv.config({path : "./config/.env"});
+dotenv.config();
 app.use(express.json({ limit: '10mb' }));
-
 // Increase URL-encoded payload limit to 10MB
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 app.post('/api/login',login);
 //app.use( require("./controllers/employee") );
 app.use( require("./controllers/siteadmin") );
-//app.use( require("./controllers/superadmin") );
+app.use( require("./controllers/superadmin") );
 
 app.use('/api', attendanceRoutes);
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.post('/api/sites/:siteId/images', async (req, res) => {
   try {
@@ -73,12 +74,8 @@ app.post('/sites/progressImages', upload.single('image'), async (req, res) => {
     { new: true }  // Return the updated document
   );
   
-
-
   res.json({ progressImages: updatedSite.progressImages });
 });
-
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -3,7 +3,12 @@ import { Button, TextField } from '@mui/material';
 import './employee.css';
 import '../../App';
 
-const WorkerInfo = (workerId) => {
+const WorkerInfo = () => {
+  const user= JSON.parse(localStorage.getItem('user'));
+  const workerId=user.empId;
+  if (!workerId) {
+      throw new Error('User not found in localStorage');
+  }
   const [workerData, setWorkerData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

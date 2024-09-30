@@ -18,7 +18,6 @@ export const addSite = async (site) => {
       'Content-Type': 'application/json',
     },
   };
-  
-  const response = await axios.post('http://localhost:5000/api/sites', site, config);
+  const response = await axios.post('http://localhost:5000/api/sites', site);
   return response.data;
 };

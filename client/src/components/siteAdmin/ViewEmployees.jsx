@@ -78,7 +78,7 @@ const ViewEmployee = () => {
       // Delete employee via PUT /employee/delete/:empId
       await axios.put(`http://localhost:5000/employee/delete/${empId}`);
       // Delete user via DELETE /users/:empId
-      await axios.delete(`http://localhost:5000/users/${empId}`);
+    
       // Remove employee from state
       const updatedEmployees = employees.filter(emp => emp.empId !== empId);
       setEmployees(updatedEmployees);

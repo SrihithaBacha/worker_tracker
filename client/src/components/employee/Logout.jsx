@@ -3,7 +3,13 @@ import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import './employee.css';
 
-const Attendance = ({ employeeId, siteId }) => {
+const Attendance = () => {
+  const user= JSON.parse(localStorage.getItem('user'));
+  const employeeId=user.empId;
+  const siteId=user.siteId;
+  if (!employeeId) {
+      throw new Error('User not found in localStorage');
+  }
   console.log(`Employee ID: ${employeeId}, Site ID: ${siteId}`);
   const [image, setImage] = useState(null);
   const [location, setLocation] = useState(null);

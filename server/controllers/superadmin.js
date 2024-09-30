@@ -1,0 +1,11 @@
+const express = require('express');
+const services =require('../services/superadmin');
+const app=express();
+app.get('/api/siteadmins/:id',services.getSiteAdmins);
+app.get('/api/sites/:id',services.getSitesById);
+app.post('/api/siteadmins',services.postSiteAdmin);
+app.post('/api/sites',services.postSites);
+app.post('/api/superadmins',services.postSuperAdmin);
+app.put('/api/sites/:id',services.updateSite);
+app.delete('/api/sites/:id',services.deleteSite);
+module.exports=app;

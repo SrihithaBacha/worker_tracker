@@ -3,7 +3,12 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import { format, parseISO } from 'date-fns';
 
 
-const AttendanceTable = (workerId) => {
+const AttendanceTable = () => {
+  const user= JSON.parse(localStorage.getItem('user'));
+  const workerId=user.empId;
+  if (!workerId) {
+      throw new Error('User not found in localStorage');
+  }
   console.log('workerId', workerId.employeeId);
   const [attendanceData, setAttendanceData] = useState([]);
   const [loading, setLoading] = useState(true);
