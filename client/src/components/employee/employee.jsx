@@ -76,11 +76,11 @@ const Employee = () => {
               <Typography variant="h6" style={{ flexGrow: 1 }}>
                 Worker Tracker
               </Typography>
-              <Button color="inherit" component={Link} to="/worker-info">Worker Info</Button>
-              <Button color="inherit" component={Link} to="/attendance">Attendance</Button>
-              <Button color="inherit" component={Link} to="/attendance-table">Attendance Table</Button>
-              <Button color="inherit" component={Link} to="/work-post">Work Post</Button>
-              <Button color="inherit" component={Link} to="/logout">Logout</Button>
+              <Button color="inherit" component={Link} to="worker-info">Worker Info</Button>
+              <Button color="inherit" component={Link} to="attendance">Attendance</Button>
+              <Button color="inherit" component={Link} to="attendance-table">Attendance Table</Button>
+              <Button color="inherit" component={Link} to="work-post">Work Post</Button>
+              <Button color="inherit" component={Link} to="logout">Logout</Button>
             </>
           )}
         </Toolbar>
