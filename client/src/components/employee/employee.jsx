@@ -2,21 +2,17 @@ import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Typography, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery, useTheme } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-// import Attendance from './Attendance';
-// import AttendanceTable from './AttendanceTable';
-// import WorkPost from './WorkPost';
-// import Logout from './Logout';
-// import WorkerInfo from './WorkerInfo';
 
 import './employee.css';
 
 const Employee = () => {
-  const user= JSON.parse(localStorage.getItem('user'));
-  const employeeId=user.empId;
-  
+  const user = JSON.parse(localStorage.getItem('user'));
+  const employeeId = user?.empId; // Use optional chaining
+
   if (!employeeId) {
-      throw new Error('User not found in localStorage');
+    throw new Error('User not found in localStorage');
   }
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -29,30 +25,34 @@ const Employee = () => {
     setDrawerOpen(open);
   };
 
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+  };
+
   const drawerList = () => (
     <div
-      role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
+    role="presentation"
+    onClick={toggleDrawer(false)}
+    onKeyDown={toggleDrawer(false)}
     >
-      <List>
-        <ListItem component={Link} to="/worker-info">
-          <ListItemText primary="Worker Info" />
-        </ListItem>
-        <ListItem component={Link} to="/attendance">
-          <ListItemText primary="Attendance" />
-        </ListItem>
-        <ListItem component={Link} to="/attendance-table">
-          <ListItemText primary="Attendance Table" />
-        </ListItem>
-        <ListItem component={Link} to="/work-post">
-          <ListItemText primary="Work Post" />
-        </ListItem>
-        <ListItem component={Link} to="/logout">
-          <ListItemText primary="Logout" />
-        </ListItem>
-      </List>
-    </div>
+    <List>
+      <ListItem button component={Link} to="/employee/worker-info"> {/* Adjusted path */}
+        <ListItemText primary="Worker Info" />
+      </ListItem>
+      <ListItem button component={Link} to="/employee/attendance"> {/* Adjusted path */}
+        <ListItemText primary="Attendance" />
+      </ListItem>
+      <ListItem button component={Link} to="/employee/attendance-table"> {/* Adjusted path */}
+        <ListItemText primary="Attendance Table" />
+      </ListItem>
+      <ListItem button component={Link} to="/employee/work-post"> {/* Adjusted path */}
+        <ListItemText primary="Work Post" />
+      </ListItem>
+      <ListItem button component={Link} to="/employee/logout"> {/* Adjusted path */}
+        <ListItemText primary="Logout" />
+      </ListItem>
+    </List>
+  </div>
   );
 
   return (
@@ -76,11 +76,11 @@ const Employee = () => {
               <Typography variant="h6" style={{ flexGrow: 1 }}>
                 Worker Tracker
               </Typography>
-              <Button color="inherit" component={Link} to="worker-info">Worker Info</Button>
-              <Button color="inherit" component={Link} to="attendance">Attendance</Button>
-              <Button color="inherit" component={Link} to="attendance-table">Attendance Table</Button>
-              <Button color="inherit" component={Link} to="work-post">Work Post</Button>
-              <Button color="inherit" component={Link} to="logout">Logout</Button>
+              <Button color="inherit" component={Link} to="/worker-info">Worker Info</Button>
+              <Button color="inherit" component={Link} to="/attendance">Attendance</Button>
+              <Button color="inherit" component={Link} to="/attendance-table">Attendance Table</Button>
+              <Button color="inherit" component={Link} to="/work-post">Work Post</Button>
+              <Button color="inherit" component={Link} to="/logout">Logout</Button>
             </>
           )}
         </Toolbar>

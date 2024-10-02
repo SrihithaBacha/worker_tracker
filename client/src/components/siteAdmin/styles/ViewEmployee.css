@@ -1,5 +1,3 @@
-/* src/components/styles/viewEmployee.css */
-
 .employee-table-container {
   padding: 30px;
   background-color: #ffffff;
@@ -177,6 +175,9 @@ h2 {
   width: 90%;
   max-width: 500px;
   position: relative;
+  display: flex;
+  flex-direction:column ;
+  align-items: center;
 }
 
 .employee-dialog h3 {
@@ -262,6 +263,7 @@ h2 {
   }
 
   .employee-dialog {
+
     padding: 20px;
     max-width: 90%;
   }
@@ -269,4 +271,11 @@ h2 {
   .dialog-content p {
     font-size: 14px;
   }
+}
+
+.employee-dialog-overlay{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

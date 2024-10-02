@@ -110,6 +110,64 @@ const getEmployeeById = async (req, res) => {
   }
 };
 
+// Update employee by empId
+const updateEmployee = async (req, res) => {
+  const { id } = req.params; // This is the empId
+  const updateData = req.body;
+
+  try {
+    // Find the employee by empId and update with new data
+    const updatedEmployee = await Employee.findOneAndUpdate({ empId: id }, updateData, { new: true, runValidators: true });
+
+    if (!updatedEmployee) {
+      return res.status(404).json({ message: 'Employee not found' });
+    }
+
+    res.status(200).json(updatedEmployee);
+  } catch (error) {
+    console.error('Error updating employee:', error);
+    res.status(500).json({ message: 'Failed to update employee', error });
+  }
+};
+
+// Add images to site by siteId
+const addImageToSite = async (req, res) => {
+  const { siteId } = req.params;
+  const { image, isProgressImage } = req.body;
+
+  if (!image) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    let update;
+    if (isProgressImage) {
+      update = { $push: { progressImages: image } };
+    } else {
+      const { description } = req.body;
+      if (!description) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+      update = { $push: { images: { description, image } } };
+    }
+
+    const updatedSite = await Site.findOneAndUpdate(
+      { siteId },
+      update,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedSite) {
+      return res.status(404).json({ message: 'Site not found' });
+    }
+
+    res.status(200).json(updatedSite);
+  } catch (error) {
+    console.error('Error adding image to site:', error);
+    res.status(500).json({ message: 'Failed to add image to site', error });
+  }
+};
+
 // Get Sites under a Site Admin
 const getSitesUnderSiteAdmin = async (req, res) => {
   try {
@@ -297,4 +355,6 @@ module.exports = {
   updateDailyRecords,
   removeEmployee,
   getSitesUnderSiteAdmin,
+  updateEmployee,
+  addImageToSite,
 };

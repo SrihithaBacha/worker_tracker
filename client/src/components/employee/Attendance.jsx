@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import './employee.css';
 
 const Attendance = () => {
-  const user= JSON.parse(localStorage.getItem('user'));
-  const employeeId=user.empId;
-  const siteId=user.siteId;
+  const user = JSON.parse(localStorage.getItem('user'));
+  const employeeId = user.empId;
+  const siteId = user.siteId;
   if (!employeeId) {
-      throw new Error('User not found in localStorage');
+    throw new Error('User not found in localStorage');
   }
   console.log(`Employee ID: ${employeeId}, Site ID: ${siteId}`);
   const [image, setImage] = useState(null);
@@ -16,7 +15,6 @@ const Attendance = () => {
   const [loading, setLoading] = useState(true);
   const [isCapturing, setIsCapturing] = useState(false);
   const videoRef = useRef(null);
-  const navigate = useNavigate();
 
   const getLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -102,27 +100,33 @@ const Attendance = () => {
       // Stop the video stream
       stopVideo();
     }
+    setIsCapturing(false);
   };
 
-  const handleSubmitAttendance = async () => {
+  const handleSubmitAttendance = async (type) => {
     if (image && location) {
       const data = {
-        employee: employeeId,
-        site:  siteId, // Send siteId as a string
-        checkInTime: new Date().toISOString(),
-        checkInImage: image,
+        empId: employeeId,
+        siteId: siteId,
+        checkIn: type === 'checkin' ? new Date().toISOString() : undefined,
+        checkOut: type === 'checkout' ? new Date().toISOString() : undefined,
+        selfies: [image],
         location: {
           latitude: location.lat,
           longitude: location.lng
         },
-        workStatus: 'pending' // Default work status, adjust as needed
+        work: {
+          workAssigned: "Task A", // Example value, adjust as needed
+          workStatus: type === 'checkin' ? "pending" : "completed", // Adjust work status based on type
+          remark: type === 'checkin' ? "Checked in" : "Checked out" // Adjust remark based on type
+        }
       };
-      console.log(typeof(data.site), data.site);
 
       console.log('Submitting attendance data:', data);
 
       try {
-        const response = await fetch('http://localhost:5000/api/attendance', {
+        const endpoint = type === 'checkin' ? 'http://localhost:5000/api/attendance' : 'http://localhost:5000/api/attendance/logout';
+        const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -139,11 +143,14 @@ const Attendance = () => {
         const responseData = await response.json();
         console.log('Response data:', responseData);
 
-        alert('Attendance Submitted');
-        navigate(`/attendance-table`);
+        alert(`${type === 'checkin' ? 'Check-in' : 'Check-out'} Submitted`);
+        setImage(null); // Clear the image after submission
+        startVideo(); // Restart the video stream for the next capture
+        if (type === 'checkout') {
+        }
       } catch (error) {
-        console.error('Error submitting attendance:', error);
-        alert('Failed to submit attendance');
+        console.error(`Error submitting ${type}:`, error);
+        alert(`Failed to submit ${type}`);
       }
     } else {
       console.error('Image or location is missing');
@@ -165,8 +172,11 @@ const Attendance = () => {
         Capture Image
       </Button>
       <br />
-      <Button variant="contained" onClick={handleSubmitAttendance}>
-        Submit Attendance
+      <Button variant="contained" onClick={() => handleSubmitAttendance('checkin')} style={{ margin: '10px' }}>
+        Submit Check-in
+      </Button>
+      <Button variant="contained" onClick={() => handleSubmitAttendance('checkout')} style={{ margin: '10px' }}>
+        Submit Check-out
       </Button>
     </div>
   );
