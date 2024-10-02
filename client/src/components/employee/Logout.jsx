@@ -1,176 +1,98 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import './employee.css';
 
-const Attendance = () => {
-  const user= JSON.parse(localStorage.getItem('user'));
-  const employeeId=user.empId;
-  const siteId=user.siteId;
-  if (!employeeId) {
-      throw new Error('User not found in localStorage');
-  }
-  console.log(`Employee ID: ${employeeId}, Site ID: ${siteId}`);
-  const [image, setImage] = useState(null);
-  const [location, setLocation] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isCapturing, setIsCapturing] = useState(false);
-  const videoRef = useRef(null);
+const Logout = () => {
+  const [workStatus, setWorkStatus] = useState(''); // Hook must be at the top
   const navigate = useNavigate();
 
-  const getLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        });
-        setLoading(false);
-      },
-      (error) => {
-        console.error('Error getting location:', error);
-        setLoading(false);
-      }
-    );
+  const user = JSON.parse(localStorage.getItem('user'));
+  const employeeId = user?.empId.toString(); // Use optional chaining
+  const siteId = user?.siteId?.toString(); // Ensure siteId is a string
+
+  if (!user || !employeeId || !siteId) {
+    console.error('User not found or incomplete data in localStorage');
+    alert('User not found, please log in.');
+    navigate('/login'); // Redirect to login if user is missing
+    return null; // Don't render the component
+  }
+
+  const handleChange = (event) => {
+    setWorkStatus(event.target.value);
   };
 
-  const startVideo = async () => {
-    if (videoRef.current) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      } catch (error) {
-        console.error('Error starting video:', error);
-      }
-    }
-  };
-
-  const stopVideo = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject;
-      if (stream instanceof MediaStream) {
-        const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
-      }
-      videoRef.current.srcObject = null;
-    }
-  };
-
-  useEffect(() => {
-    getLocation();
-    startVideo();
-
-    return () => {
-      stopVideo();
-    };
-  }, []);
-
-  const captureImage = () => {
-    setIsCapturing(true);
-    if (videoRef.current && videoRef.current.readyState >= 2) {
-      const canvas = document.createElement('canvas');
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const resizedCanvas = document.createElement('canvas');
-        const maxSize = 500; // Adjust the max size as needed
-        let width = canvas.width;
-        let height = canvas.height;
-
-        if (width > height) {
-          if (width > maxSize) {
-            height = Math.round((height *= maxSize / width));
-            width = maxSize;
-          }
-        } else {
-          if (height > maxSize) {
-            width = Math.round((width *= maxSize / height));
-            height = maxSize;
-          }
-        }
-
-        resizedCanvas.width = width;
-        resizedCanvas.height = height;
-        const resizedCtx = resizedCanvas.getContext('2d');
-        resizedCtx.drawImage(canvas, 0, 0, width, height);
-        setImage(resizedCanvas.toDataURL('image/png'));
-      }
-
-      // Stop the video stream
-      stopVideo();
-    }
-    setIsCapturing(false);
-  };
-
-  const handleSubmitAttendance = async () => {
-    if (image && location) {
+  const handleSubmitLogout = async () => {
+    if (workStatus) {
       const data = {
-        employee: employeeId,
-        site:  siteId, // Send siteId as a string
-        checkInTime: new Date().toISOString(),
-        checkInImage: image,
-        location: {
-          latitude: location.lat,
-          longitude: location.lng
-        },
-        workStatus: 'pending' // Default work status, adjust as needed
+        empId: employeeId,
+        siteId: siteId,
+        workStatus: workStatus, // Selected work status
       };
-      console.log(typeof(data.site), data.site);
 
-      console.log('Submitting attendance data:', data);
+      console.log('Submitting logout data:', data);
 
       try {
-        const response = await fetch('http://localhost:5000/api/attendance', {
-          method: 'POST',
+        const response = await fetch('http://localhost:5000/api/signOut', {
+          method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
 
         if (!response.ok) {
           const errorText = await response.text();
           console.error('Error response:', errorText);
-          throw new Error('Network response was not ok');
+          alert('Failed to log out. Please try again.');
+          return;
         }
 
         const responseData = await response.json();
         console.log('Response data:', responseData);
 
-        alert('Attendance Submitted');
-        navigate(`/attendance-table`);
+        alert('Logout Submitted');
+        // navigate(`/attendance-table`);
       } catch (error) {
-        console.error('Error submitting attendance:', error);
-        alert('Failed to submit attendance');
+        console.error('Error submitting logout:', error);
+        alert('Failed to submit logout due to a network error.');
       }
     } else {
-      console.error('Image or location is missing');
-      alert('Please capture an image and ensure location is available');
+      console.error('Work status is missing');
+      alert('Please select the work status');
     }
   };
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <h1>Take Attendance</h1>
-      <div className={image ? 'hidden' : ''}>
-        <video ref={videoRef} style={{ width: '100%', maxHeight: '400px', marginBottom: '10px' }} />
-      </div>
-      {image && <img src={image} alt="Captured" style={{ marginBottom: '10px' }} />}
+      <h1>Logout</h1>
+      <FormControl variant="outlined" style={{ minWidth: 200, marginBottom: '20px' }}>
+        <InputLabel id="work-status-label">Work Status</InputLabel>
+        <Select
+          labelId="work-status-label"
+          id="work-status"
+          value={workStatus}
+          onChange={handleChange}
+          label="Work Status"
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value="completed">Completed</MenuItem>
+          <MenuItem value="in-progress">In Progress</MenuItem>
+          <MenuItem value="pending">Pending</MenuItem>
+        </Select>
+      </FormControl>
       <br />
-      <p>Latitude: {loading ? 'loading...' : location?.lat}</p>
-      <p>Longitude: {loading ? 'loading...' : location?.lng}</p>
-      <Button variant="contained" onClick={captureImage} style={{ margin: '10px' }} disabled={isCapturing}>
-        Capture Image
+      <Button variant="contained" onClick={handleSubmitLogout} style={{margin:'20px'}}>
+        Update Status
       </Button>
       <br />
-      <Button variant="contained" onClick={handleSubmitAttendance}>
-        Submit Attendance
+      <Button variant="contained" onClick={() => navigate('/login')}>
+        Logout
       </Button>
     </div>
   );
 };
 
-export default Attendance;
+export default Logout;

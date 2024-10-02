@@ -26,8 +26,6 @@ const PrivateRoute = ({ element: Component, allowedRoles }) => {
 };
 
 function App() {
-  const employeeId = '66f645e5b11fe15eb98ae94b';
-  const siteId = '66f64661b11fe15eb98ae952';
   return (
     <div className="App">
       <Router>
@@ -38,7 +36,7 @@ function App() {
           
           {/* Employee Routes */}
           <Route path="/employee" element={<PrivateRoute allowedRoles={['employee']} element={<Employee />} />}>
-            <Route index element={<WorkerInfo employeeId={employeeId} />} />
+            <Route index element={<WorkerInfo />} />
             <Route path="worker-info" element={<WorkerInfo/>} />
             <Route path="attendance" element={<Attendance  />} />
             <Route path="attendance-table" element={<AttendanceTable />} />

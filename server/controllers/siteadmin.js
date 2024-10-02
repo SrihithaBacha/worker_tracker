@@ -4,6 +4,8 @@ const app=express();
 
 app.get('/employee/undersite/:id',services.getEmployees);
 app.get('/employee/:id',services.getEmployeeById);
+app.put('/employee/:id',services.updateEmployee);
+app.post('/sites/:siteId/images',services.addImageToSite);
 app.post('/employee',services.addEmployee);
 app.get('/sites/:id',services.getSiteDetails);
 app.get('/sites-email',services.getSiteByEmail);
