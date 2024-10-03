@@ -10,7 +10,6 @@ const multer = require('multer');
 dotenv.config(); // Load environment variables
 
 const app = express();
-
 app.use(cors({
     origin: '*'
 }));
@@ -21,7 +20,6 @@ app.post('/api/login', login);
 app.use(require("./controllers/siteadmin"));
 app.use(require("./controllers/superadmin"));
 app.use('/api', attendanceRoutes);
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -57,7 +55,6 @@ app.post('/sites/progressImages', upload.single('image'), async (req, res) => {
   }
 });
 
-// Error handling middleware (optional but recommended)
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');

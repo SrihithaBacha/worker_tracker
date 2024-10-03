@@ -28,7 +28,6 @@ const Home = () => {
     siteInfo: '',
     progress: 0,
   });
-  const [newImage, setNewImage] = useState('');
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState(null);

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Employee from './components/employee/employee';
 import Login from './components/login/login'; 
 import SuperAdmin from './components/superAdmin/superAdmin'; 
-import SiteAdmin from './components//siteAdmin/siteAdmin'; 
+import SiteAdmin from './components/siteAdmin/siteAdmin'; 
 import { getUserFromStorage } from './services/authService';
 import Home from './components/siteAdmin/Home';
 import AddEmployee from './components/siteAdmin/AddEmployee';
@@ -45,9 +45,8 @@ function App() {
           </Route>
 
                 <Route path="/employee" element={<Employee />} />
-                <Route path="/superAdmin" element={<SuperAdmin />} />
-                <Route path="/siteAdmin" element={<SiteAdmin />} />
-
+                <Route path="/superAdmin" element={<PrivateRoute allowedRoles={['superAdmin']} element={<SuperAdmin/>}/>} />
+                <Route path="/siteAdmin" element={<PrivateRoute allowedRoles={['siteAdmin']} element={<SiteAdmin/>} />} />
                 {/* site-admin routes */}
 
                 <Route path="/siteAdmin/site-home" element={<Home />} />

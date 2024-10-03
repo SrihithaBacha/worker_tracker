@@ -56,7 +56,7 @@ const WelcomeSiteAdmin = () => {
       setError('Failed to load sites. Please try again later.');
     }
   };
-
+   
   // Function to handle site card click
   const handleCardClick = (siteId) => {
     localStorage.setItem('siteId', siteId);
@@ -148,14 +148,14 @@ const WelcomeSiteAdmin = () => {
                   onClick={() => handleCardClick(site.siteId)}
                 >
                   <img 
-                    src={site.siteImage || 'https://via.placeholder.com/300x200?text=No+Image'} 
+                     src={'https://media.istockphoto.com/id/579157120/vector/construction-skyline-scene-blue-background.jpg?s=612x612&w=0&k=20&c=igltrPF2-r-2onl82frfP0wk8Q_TL428NE1UErg9UBM='} 
                     alt={site.name} 
                     className="site-image" 
                   />
                   <div className="site-details">
                     <h3>{site.name}</h3>
-                    <p><strong>Location:</strong> {site.location}</p>
-                    <p>{site.siteInfo}</p>
+                    <p><strong>Location</strong></p>
+                    <p>{site.location}</p>
                   </div>
                 </div>
               ))}

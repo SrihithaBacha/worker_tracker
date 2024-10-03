@@ -344,8 +344,24 @@ const getSiteByEmail = async(req,res)=>{
   }
 };
 
+const updateProgressImages=async (req, res) => {
+  const { siteId } = req.body;
+  const imagePath = req.file.filename; // Get the stored image filename
+
+  // Update the site with the new image reference in your database
+  // Assuming you have a Site model
+  const updatedSite = await Site.findOneAndUpdate(
+    { "siteId": siteId },  // Use an object as the filter
+    { $push: { progressImages: imagePath } },
+    { new: true }  // Return the updated document
+  );
+  
+  res.json({ progressImages: updatedSite.progressImages });
+};
+
 module.exports = {
   getSiteByEmail,
+  updateProgressImages,
   addEmployee,
   getEmployees,
   getEmployeeById,

@@ -33,3 +33,4 @@ const dailyRecordSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model('dailyrecords', dailyRecordSchema);
+
