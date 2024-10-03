@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Employee from './components/employee/employee';
 import Login from './components/login/login'; 
 import SuperAdmin from './components/superAdmin/superAdmin'; 
-import SiteAdmin from './components//siteAdmin/siteAdmin'; 
+import SiteAdmin from './components/siteAdmin/siteAdmin'; 
 import { getUserFromStorage } from './services/authService';
 import Home from './components/siteAdmin/Home';
 import AddEmployee from './components/siteAdmin/AddEmployee';
@@ -26,8 +26,6 @@ const PrivateRoute = ({ element: Component, allowedRoles }) => {
 };
 
 function App() {
-  const employeeId = '66f645e5b11fe15eb98ae94b';
-  const siteId = '66f64661b11fe15eb98ae952';
   return (
     <div className="App">
       <Router>
@@ -38,7 +36,7 @@ function App() {
           
           {/* Employee Routes */}
           <Route path="/employee" element={<PrivateRoute allowedRoles={['employee']} element={<Employee />} />}>
-            <Route index element={<WorkerInfo employeeId={employeeId} />} />
+            <Route index element={<WorkerInfo/>} />
             <Route path="worker-info" element={<WorkerInfo/>} />
             <Route path="attendance" element={<Attendance  />} />
             <Route path="attendance-table" element={<AttendanceTable />} />
@@ -47,9 +45,8 @@ function App() {
           </Route>
 
                 <Route path="/employee" element={<Employee />} />
-                <Route path="/superAdmin" element={<SuperAdmin />} />
-                <Route path="/siteAdmin" element={<SiteAdmin />} />
-
+                <Route path="/superAdmin" element={<PrivateRoute allowedRoles={['superAdmin']} element={<SuperAdmin/>}/>} />
+                <Route path="/siteAdmin" element={<PrivateRoute allowedRoles={['siteAdmin']} element={<SiteAdmin/>} />} />
                 {/* site-admin routes */}
 
                 <Route path="/siteAdmin/site-home" element={<Home />} />

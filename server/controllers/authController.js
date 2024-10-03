@@ -2,7 +2,6 @@ const { findUserByRole } = require('../services/authService');
 const jwt = require('jsonwebtoken');
 
 const login = async (req, res) => {
-  console.log(req.body)
   const { email, password, role } = req.body;
 
   try {

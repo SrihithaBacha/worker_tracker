@@ -84,6 +84,7 @@
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
+  align-items: center;
   height: 100%;
 }
 
@@ -103,6 +104,8 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  font-size: large;
 }
 
 .site-details h3 {

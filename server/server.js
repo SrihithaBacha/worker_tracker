@@ -7,7 +7,6 @@ const attendanceRoutes = require('./controllers/dailyRecords.js');
 const Site = require('./models/sites');
 
 const app = express();
-
 app.use(cors({
     origin: '*'
 }));
