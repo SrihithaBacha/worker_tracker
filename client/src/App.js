@@ -36,7 +36,7 @@ function App() {
           
           {/* Employee Routes */}
           <Route path="/employee" element={<PrivateRoute allowedRoles={['employee']} element={<Employee />} />}>
-            <Route index element={<WorkerInfo/>} />
+            <Route index element={<WorkerInfo />} />
             <Route path="worker-info" element={<WorkerInfo/>} />
             <Route path="attendance" element={<Attendance  />} />
             <Route path="attendance-table" element={<AttendanceTable />} />
